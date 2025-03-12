@@ -1,0 +1,16 @@
+confluent-kafka==2.3.0
+websocket-client==1.7.0
+httpx==0.27.0
+pyspark==3.5.0
+pydantic-settings==2.1.0
+python-dotenv==1.0.0
+structlog==24.1.0
+tenacity==8.2.3
+numpy==1.26.3
+scipy==1.12.0
+google-cloud-bigquery==3.14.1
+pyarrow==15.0.0
+apache-airflow==2.8.1
+slack-sdk==3.27.0
+pytest==8.0.0
+pytest-mock==3.12.0

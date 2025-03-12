@@ -1,0 +1,17 @@
+name: stock_analytics
+version: "1.0.0"
+config-version: 2
+
+profile: stock_analytics
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+vars:
+  zscore_threshold: 3.0
