@@ -1,0 +1,21 @@
+version: 2
+sources:
+  - name: stock_raw
+    schema: stock_analytics
+    tables:
+      - name: trades_raw_stream
+        description: Raw trades from Spark Streaming
+        loaded_at_field: loaded_at
+        freshness:
+          warn_after: {count: 5, period: minute}
+          error_after: {count: 30, period: minute}
+      - name: ohlcv_1min
+        description: 1-minute OHLCV from Spark Streaming
+      - name: ohlcv_5min
+        description: 5-minute OHLCV from Spark Streaming
+      - name: ohlcv_1hr
+        description: 1-hour OHLCV from Spark Streaming
+      - name: anomalies
+        description: Detected anomalies from Z-score detector
+      - name: daily_summary_batch
+        description: Authoritative daily summary from batch layer
