@@ -1,0 +1,118 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": true,
+  "panels": [
+    {
+      "title": "Real-Time Price (1min OHLCV)",
+      "type": "candlestick",
+      "gridPos": { "h": 10, "w": 16, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "rawSql": "SELECT window_start as time, open, high, low, close, volume FROM `stock_analytics.ohlcv_1min` WHERE symbol = '${symbol}' AND DATE(window_start) = CURRENT_DATE() ORDER BY window_start",
+          "format": "table"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": { "custom": { "mode": "candles" } }
+      }
+    },
+    {
+      "title": "Trade Volume",
+      "type": "barchart",
+      "gridPos": { "h": 10, "w": 8, "x": 16, "y": 0 },
+      "targets": [
+        {
+          "rawSql": "SELECT window_start as time, volume FROM `stock_analytics.ohlcv_1min` WHERE symbol = '${symbol}' AND DATE(window_start) = CURRENT_DATE() ORDER BY window_start",
+          "format": "table"
+        }
+      ]
+    },
+    {
+      "title": "Anomaly Events",
+      "type": "table",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 10 },
+      "targets": [
+        {
+          "rawSql": "SELECT symbol, severity, anomaly_type, price, price_zscore, volume_zscore, detected_at FROM `stock_analytics.anomalies` WHERE DATE(detected_at) = CURRENT_DATE() ORDER BY detected_at DESC LIMIT 50",
+          "format": "table"
+        }
+      ],
+      "fieldConfig": {
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "severity" },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  { "type": "value", "options": { "EXTREME": { "color": "red" }, "CRITICAL": { "color": "orange" }, "WARNING": { "color": "yellow" } } }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "title": "Anomaly Count by Symbol (Today)",
+      "type": "piechart",
+      "gridPos": { "h": 8, "w": 6, "x": 12, "y": 10 },
+      "targets": [
+        {
+          "rawSql": "SELECT symbol, COUNT(*) as count FROM `stock_analytics.anomalies` WHERE DATE(detected_at) = CURRENT_DATE() GROUP BY symbol ORDER BY count DESC",
+          "format": "table"
+        }
+      ]
+    },
+    {
+      "title": "Price Z-Score Distribution",
+      "type": "histogram",
+      "gridPos": { "h": 8, "w": 6, "x": 18, "y": 10 },
+      "targets": [
+        {
+          "rawSql": "SELECT price_zscore FROM `stock_analytics.anomalies` WHERE DATE(detected_at) >= DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY)",
+          "format": "table"
+        }
+      ]
+    },
+    {
+      "title": "Daily Returns Heatmap",
+      "type": "state-timeline",
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 18 },
+      "targets": [
+        {
+          "rawSql": "SELECT trade_date as time, symbol, daily_return_pct as value FROM `stock_analytics.fct_daily_market` WHERE trade_date >= DATE_SUB(CURRENT_DATE(), INTERVAL 30 DAY) ORDER BY trade_date",
+          "format": "table"
+        }
+      ]
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 39,
+  "style": "dark",
+  "tags": ["stock", "realtime"],
+  "templating": {
+    "list": [
+      {
+        "name": "symbol",
+        "type": "query",
+        "query": "SELECT DISTINCT symbol FROM `stock_analytics.ohlcv_1min` WHERE DATE(window_start) = CURRENT_DATE() ORDER BY symbol",
+        "current": { "text": "AAPL", "value": "AAPL" },
+        "multi": false,
+        "includeAll": false
+      }
+    ]
+  },
+  "time": { "from": "now-6h", "to": "now" },
+  "title": "Stock Market Pipeline - Real-Time Overview",
+  "uid": "stock-overview"
+}
