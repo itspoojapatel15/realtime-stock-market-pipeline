@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.env
+venv/
+credentials/
+*.tfstate*
+.terraform/
+dbt_project/target/
+dbt_project/dbt_packages/
+spark-checkpoints/
+*.log
